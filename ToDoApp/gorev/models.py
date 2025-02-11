@@ -10,7 +10,7 @@ class Gorev(models.Model): #ORM -Object Relational Mapping
     tarih = models.DateTimeField(auto_now_add=True) #gorev olusturuldugunda otomatik dolar
 
     def __str__(self):
-        return self.baslik
+        return self.baslik +" "+ self.tanim[:5]
     
     class Meta: #nodelin ek yapilandirilmalarinin yapildigi ic sinif
         ordering = ['tamamlandiMi'] #veritabaninda siralama yapildiginda sonuclar nasıl donsun
