@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% load static %}
+
+<!--
+extends: Şablon mirası için kullanılır, ana şablondan (layout.html) yapıyı miras alır.
+load static: Statik dosyaları (CSS, JS, resimler) kullanmak için gereken etikettir.
+-->
+
+
+{% block page_title %}
+    Görevler
+{% endblock page_title %}
+
+<!--
+ şablon mirası (template inheritance)
+
+ block etiketi, şablon mirası için bir alan tanımlar.
+Bu blok, alt şablonlar (child templates) tarafından doldurulabilir veya üzerine yazılabilir.
+static etiketi, projedeki statik dosyalara referans oluşturur.
+-->
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'courses/css/style.css' %}">
+{% endblock %}
+   
+
+
+{% block content %}
+    
+    
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-3">
+            <!--menu-->
+               Merhaba index
+
+               <div class="card">
+                <h5 class="card-header">Featured</h5>
+                <div class="card-body">
+                  <h5 class="card-title">Special title treatment</h5>
+                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+              </div>
+
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock content %}
+
+
+
