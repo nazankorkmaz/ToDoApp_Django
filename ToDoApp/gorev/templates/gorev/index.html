@@ -20,8 +20,6 @@ Bu blok, alt şablonlar (child templates) tarafından doldurulabilir veya üzeri
 static etiketi, projedeki statik dosyalara referans oluşturur.
 -->
 
-   
-
 
 {% block content %}
     
@@ -37,14 +35,19 @@ static etiketi, projedeki statik dosyalara referans oluşturur.
                <div class="card">
                 <h5 class="card-header ">Görevler</h5>
                 {% for gorev in gorevler  %}
-                <div class="card-body ">
+                <div class="card-body id="gorev-{{ gorev.id }}"">
                     
                     <div class="d-flex justify-content-between align-items-center">
     
                         <!-- Checkbox ve Başlığı Grup Halinde Birleştirdik -->
                         <div class="d-flex align-items-center">
-                          <input class="form-check-input me-2" type="checkbox" value="" id="flexCheckIndeterminate">
-                          <h5 class="card-title mb-0 ms-0">{{ gorev.baslik }}</h5>
+                          <input class="form-check-input me-2 toggle-task" name="tamamlandiMi" data-task-id="{{gorev.id}}" {% if gorev.tamamlandiMi %}checked{% endif %}  type="checkbox" value="" >
+                          <input type="hidden" name="task_id" value="{{ gorev.id }}">
+                          <!-- Eğer görev tamamlandıysa, completed sınıfı ekleniyor -->
+
+                          <h5 class="card-title mb-0 ms-0 {% if gorev.tamamlandiMi %}completed{% endif %}">
+                            {{ gorev.baslik }}
+                        </h5>
                         </div>
                         
                         <!-- Diğer içerikler -->
@@ -67,5 +70,44 @@ static etiketi, projedeki statik dosyalara referans oluşturur.
 
 {% endblock content %}
 
+
+{% block js_files %}
+<!-- jQuery ekliyoruz (eğer layout.html'de yoksa) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.toggle-task').change(function(){
+            var checkbox = $(this);
+            var taskId = checkbox.data('task-id');
+            // Checkbox durumunu alıyoruz (true/false)
+            var completed = checkbox.is(':checked');
+            $.ajax({
+                url: "{% url 'toggle_task' %}",
+                type: "POST",
+                data: {
+                    'task_id': taskId,
+                    'tamamlandiMi': completed,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response){
+                    // Güncelleme başarılı ise, görevin başlığına çizik ekle veya kaldır
+                    var cardTitle = $('#gorev-' + taskId).find('.card-title');
+                    if(completed) {
+                        cardTitle.addClass('completed');
+                    } else {
+                        cardTitle.removeClass('completed');
+                    }
+                    window.location.reload();
+                },
+                error: function(){
+                    alert('Görev güncellenirken bir hata oluştu.');
+                    // Hata durumunda checkbox'ın durumunu geri alalım
+                    checkbox.prop('checked', !completed);
+                }
+            });
+        });
+    });
+</script>
+{% endblock js_files %}
 
 

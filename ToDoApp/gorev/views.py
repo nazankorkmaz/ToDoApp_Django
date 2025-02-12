@@ -48,3 +48,22 @@ def gorevSil(request,id):
           messages.success(request, f"'{gorev.baslik}' adlı görev silindi.")
           return redirect("gorevListesi")
      return render(request,"gorev/gorevSil.html",{"gorev":gorev})
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+@require_POST
+def toggle_task(request):
+    task_id = request.POST.get('task_id')
+    # Checkbox'tan gelen değer genellikle string olarak gelir (örn. "true" veya "false")
+    tamamlandiMi_str = request.POST.get('tamamlandiMi')
+    tamamlandiMi = True if tamamlandiMi_str.lower() == 'true' else False
+
+    try:
+        gorev = Gorev.objects.get(id=task_id)
+        gorev.tamamlandiMi = tamamlandiMi
+        gorev.save()
+        return JsonResponse({'status': 'ok', 'tamamlandiMi': gorev.tamamlandiMi})
+    except Gorev.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Görev bulunamadı.'}, status=404)
