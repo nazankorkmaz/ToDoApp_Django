@@ -25,15 +25,23 @@ static etiketi, projedeki statik dosyalara referans oluşturur.
     
     
     <div class="container mt-3">
+      <div class="row">
+        <div class="col">
+          <a href="{% url "gorevOlustur" %}" >
+            <img src="{% static 'img/plus.png' %}" alt="Plus Icon" style="height: 50px; width: auto; float:right; ">
+          </a>
+        </div>
+        
+      </div>
+        
+
+      
         <div class="row">
             <div class="col-12">
-            <!--menu-->
-               Merhaba index
-
               
-
                <div class="card">
                 <h5 class="card-header ">Görevler</h5>
+
                 {% for gorev in gorevler  %}
                 <div class="card-body id="gorev-{{ gorev.id }}"">
                     
