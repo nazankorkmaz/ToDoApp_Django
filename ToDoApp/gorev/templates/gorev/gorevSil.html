@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% load static %}
+
+{% block page_title %}
+    {{gorev.baslik}}
+{% endblock page_title %}
+    
+{% block content %}
+
+    <div class="container mt-3">
+
+        <div class="alert alert-warning">
+            
+                <strong> {{gorev.baslik}}  </strong>
+                <p>{{gorev.tanim}}</p>
+                <br>
+                <h3>silmek istiyor musunuz?</h3>
+                <form action="{% url "gorevSil" gorev.id  %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Evet</button>
+                    <a href="{% url "gorevListesi" %}" class="btn btn-primary">Geri Dön</a>
+                </form>
+            
+        </div>
+    </div>
+
+{% endblock content %}
+
+
+

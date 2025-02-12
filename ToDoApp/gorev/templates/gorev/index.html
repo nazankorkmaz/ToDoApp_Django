@@ -20,9 +20,6 @@ Bu blok, alt şablonlar (child templates) tarafından doldurulabilir veya üzeri
 static etiketi, projedeki statik dosyalara referans oluşturur.
 -->
 
-{% block css_files %}
-    <link rel="stylesheet" href="{% static 'courses/css/style.css' %}">
-{% endblock %}
    
 
 
@@ -53,8 +50,8 @@ static etiketi, projedeki statik dosyalara referans oluşturur.
                         <!-- Diğer içerikler -->
                         <p class="card-text mb-0">{{ gorev.tanim }}</p>
                         <div>
-                          <a href="#" class="btn btn-primary me-2">Düzenle</a>
-                          <a href="#" class="btn btn-danger">Sil</a>
+                          <a href="{% url "gorevDuzenle" gorev.id%}" class="btn btn-primary me-2">Düzenle</a>
+                          <a href="{% url "gorevSil" gorev.id%}" class="btn btn-danger">Sil</a>
                         </div>
                       </div>
 
