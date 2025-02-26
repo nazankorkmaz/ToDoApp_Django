@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+
+{% load static %}
+
+<!--
+extends: Şablon mirası için kullanılır, ana şablondan (layout.html) yapıyı miras alır.
+load static: Statik dosyaları (CSS, JS, resimler) kullanmak için gereken etikettir.
+-->
+
+
+{% block page_title %}
+    Görevler
+{% endblock page_title %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'gorev/css/deneme.css' %}">
+    <link rel="stylesheet" href="{% static 'gorev/css/style.css' %}">
+
+{% endblock %}
+
+<!--
+ şablon mirası (template inheritance)
+
+ block etiketi, şablon mirası için bir alan tanımlar.
+Bu blok, alt şablonlar (child templates) tarafından doldurulabilir veya üzerine yazılabilir.
+static etiketi, projedeki statik dosyalara referans oluşturur.
+-->
+
+
+{% block content %}
+
+        
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col">
+          <a href="{% url "gorevOlustur" %}" >
+            <img src="{% static 'img/plus.png' %}" alt="Plus Icon" style="height: 50px; width: auto; float:right; ">
+          </a>
+        </div>
+        
+      </div>
+        
+
+      
+        <div class="row">
+            <div class="col-12">
+              
+               <div class="card">
+                <h5 class="card-header ">Bulunan Görevler</h5>
+
+                {% if gorevler|length == 0 %}
+                    <div class="alert alert-warning">Görev Bulunamadı</div>
+                {% endif %}
+
+                {% for gorev in gorevler  %}
+                <div class="card-body id="gorev-{{ gorev.id }}"">
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+    
+                        <!-- Checkbox ve Başlığı Grup Halinde Birleştirdik -->
+                        <div class="d-flex align-items-center">
+                          <input class="form-check-input me-2 toggle-task" name="tamamlandiMi" data-task-id="{{gorev.id}}" {% if gorev.tamamlandiMi %}checked{% endif %}  type="checkbox" value="" >
+                          <input type="hidden" name="task_id" value="{{ gorev.id }}">
+                          <!-- Eğer görev tamamlandıysa, completed sınıfı ekleniyor -->
+
+                          <h5 class="card-title mb-0 ms-0 {% if gorev.tamamlandiMi %}completed{% endif %}">
+                            {{ gorev.baslik }}
+                        </h5>
+                        </div>
+                        
+                        <!-- Diğer içerikler -->
+                        <p class="card-text mb-0">{{ gorev.tanim }}</p>
+                        <div>
+                          <a href="{% url "gorevDuzenle" gorev.id%}" class="btn btn-primary me-2">Düzenle</a>
+                          <a href="{% url "gorevSil" gorev.id%}" class="btn btn-danger">Sil</a>
+                        </div>
+                      </div>
+
+                </div>
+                {% endfor %}
+              </div>
+             
+
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock content %}
+
+
+{% block js_files %}
+<!-- jQuery ekliyoruz (eğer layout.html'de yoksa) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.toggle-task').change(function(){
+            var checkbox = $(this);
+            var taskId = checkbox.data('task-id');
+            // Checkbox durumunu alıyoruz (true/false)
+            var completed = checkbox.is(':checked');
+            $.ajax({
+                url: "{% url 'toggle_task' %}",
+                type: "POST",
+                data: {
+                    'task_id': taskId,
+                    'tamamlandiMi': completed,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response){
+                    // Güncelleme başarılı ise, görevin başlığına çizik ekle veya kaldır
+                    var cardTitle = $('#gorev-' + taskId).find('.card-title');
+                    if(completed) {
+                        cardTitle.addClass('completed');
+                    } else {
+                        cardTitle.removeClass('completed');
+                    }
+                    window.location.reload();
+                },
+                error: function(){
+                    alert('Görev güncellenirken bir hata oluştu.');
+                    // Hata durumunda checkbox'ın durumunu geri alalım
+                    checkbox.prop('checked', !completed);
+                }
+            });
+        });
+    });
+</script>
+{% endblock js_files %}
+
+

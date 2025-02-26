@@ -67,3 +67,21 @@ def toggle_task(request):
         return JsonResponse({'status': 'ok', 'tamamlandiMi': gorev.tamamlandiMi})
     except Gorev.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Görev bulunamadı.'}, status=404)
+
+
+def arama(request):
+     print("fonkdayım")
+     if "q" in request.GET and request.GET["q"] != "":
+          q = request.GET["q"]
+          gorevler = Gorev.objects.filter(baslik__contains=q).order_by("tarih")
+          print(gorevler)
+     
+     else:
+          print("nerdeyim")
+          return redirect("gorevListesi")
+     
+     return render(request,'gorev/arama.html',
+                   {
+                        'gorevler':gorevler
+                   }
+                   )
